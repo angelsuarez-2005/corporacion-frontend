@@ -1,25 +1,25 @@
-pipeline {
-  agent any
-  stages {
-    stage('Inicio') {
-      steps {
-        echo 'Hola desde Jenkins en Windows'
-      }
-    }
-    stage('Construcción') {
-      steps {
-        echo 'Simulando construcción...'
-      }
-    }
-    stage('Pruebas') {
-      steps {
-        echo 'Ejecutando pruebas...'
-      }
-    }
-    stage('Finalización') {
-      steps {
-        echo 'Pipeline finalizado'
-      }
-    }
+node {
+
+ stage('SCM') {
+
+  checkout scm
+
+ }
+
+ stage('SonarQube Analysis') {
+
+  def scannerHome = tool 'SonarScanner for MSBuild'
+
+  withSonarQubeEnv() {
+
+   bat "${scannerHome}\\SonarScanner.MSBuild.exe begin /k:\"scandotnetcorewithjenkins\""
+
+   bat "dotnet build"
+
+   bat "${scannerHome}\\SonarScanner.MSBuild.exe end"
+
   }
+
+ }
+
 }
